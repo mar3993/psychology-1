@@ -1,1 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A thoughtful, interactive guide to age labels and healthy ageing.">
+  <title>Second Sun — A guide to ageing</title>
+  <style>
+    :root {
+      --ink: #1d2520;
+      --quiet: #647068;
+      --line: #e3e8e2;
+      --moss: #405d48;
+      --moss-pale: #e8f0e8;
+      --clay: #bd684d;
+      --clay-pale: #fae9e3;
+      --sun-pale: #fff3dd;
+      --page: #ffffff;
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--sans); }
+    a { color: inherit; }
+    button { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid #e6ac59; outline-offset: 3px; }
+    .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+
+    .site-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+    .brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font: 400 22px var(--serif); letter-spacing: -.04em; }
+    .brand-mark { position: relative; width: 22px; height: 22px; border: 1.5px solid var(--ink); border-radius: 50%; }
+    .brand-mark::after { content: ""; position: absolute; top: -3px; right: -3px; width: 8px; height: 8px; border-radius: 50%; background: #e6ac59; }
+    .site-nav { display: flex; flex-wrap: wrap; gap: 18px; color: var(--quiet); font-size: 12px; }
+    .site-nav a { text-decoration: none; }
+    .site-nav a:hover { color: var(--ink); }
+
+    .hero { display: grid; grid-template-columns: minmax(0, .9fr) minmax(330px, 1.1fr); gap: clamp(42px, 7vw, 105px); align-items: center; padding: 72px 0 84px; }
+    .eyebrow { margin: 0 0 16px; color: var(--moss); font-size: 11px; font-weight: 700; letter-spacing: .14em; }
+    h1, h2, h3 { margin: 0; font-family: var(--serif); font-weight: 400; letter-spacing: -.05em; }
+    h1 { max-width: 640px; font-size: clamp(48px, 6.3vw, 78px); line-height: .95; }
+    h1 em { color: var(--clay); font-style: italic; }
+    h2 { max-width: 640px; font-size: clamp(35px, 4.3vw, 56px); line-height: 1.02; }
+    h3 { font-size: 26px; line-height: 1.1; }
+    .lead { max-width: 510px; margin: 24px 0 0; color: var(--quiet); font-size: 17px; line-height: 1.62; }
+    .jump { display: inline-flex; gap: 8px; margin-top: 28px; color: var(--ink); font-size: 13px; text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 3px; }
+    .jump::after { content: "↓"; color: var(--clay); }
+
+    figure { margin: 0; }
+    .photo { position: relative; overflow: hidden; background: var(--moss-pale); }
+    .hero-photo { min-height: 470px; border-radius: 220px 220px 20px 20px; }
+    .photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .hero-photo img { position: absolute; inset: 0; }
+    .photo-shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(21, 35, 28, .63), rgba(21, 35, 28, 0) 52%); pointer-events: none; }
+    .photo-caption { position: absolute; right: 20px; bottom: 18px; left: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #fff; font-size: 11px; letter-spacing: .08em; }
+    .photo-caption a { color: inherit; opacity: .88; text-decoration: none; }
+    .photo-fallback { display: none; position: absolute; inset: 0; place-items: center; padding: 30px; background: var(--moss-pale); color: var(--moss); text-align: center; font: 400 20px/1.2 var(--serif); }
+    .photo.is-missing .photo-fallback { display: grid; }
+    .photo.is-missing img, .photo.is-missing .photo-shade, .photo.is-missing .photo-caption { display: none; }
+
+    .chapter { padding: 76px 0; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+    .chapter-label { color: var(--clay); font-size: 11px; font-weight: 700; letter-spacing: .14em; }
+    .chapter-grid { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: clamp(24px, 5vw, 72px); }
+    .copy { max-width: 680px; margin: 19px 0 0; color: var(--quiet); font-size: 15px; line-height: 1.66; }
+    .copy strong { color: var(--ink); }
+
+    .lens-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 30px; }
+    .lens { min-height: 168px; padding: 19px; border: 1px solid var(--line); background: #fff; color: var(--ink); text-align: left; }
+    .lens:hover { border-color: var(--moss); }
+    .lens[aria-pressed="true"] { border-color: var(--moss); background: var(--moss-pale); }
+    .lens-value { display: block; color: var(--clay); font: 400 30px var(--serif); letter-spacing: -.04em; }
+    .lens-title { display: block; margin-top: 18px; font-size: 13px; font-weight: 700; }
+    .lens-note { display: block; margin-top: 4px; color: var(--quiet); font-size: 11px; line-height: 1.42; }
+    .lens-answer { min-height: 58px; margin: 18px 0 0; color: var(--moss); font: 400 21px/1.33 var(--serif); letter-spacing: -.025em; }
+
+    .photo-band { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 22px; align-items: stretch; margin-top: 42px; }
+    .band-photo { min-height: 270px; border-radius: 18px; }
+    .band-text { display: flex; flex-direction: column; justify-content: end; padding: 22px; background: var(--sun-pale); }
+    .band-text b { color: var(--clay); font-size: 11px; letter-spacing: .12em; }
+    .band-text p { margin: 12px 0 0; font: 400 25px/1.16 var(--serif); letter-spacing: -.035em; }
+
+    .play-grid { display: grid; grid-template-columns: minmax(0, .84fr) minmax(320px, 1.16fr); gap: clamp(36px, 7vw, 96px); margin-top: 30px; }
+    .myths { border-top: 1px solid var(--line); }
+    .myth { display: grid; grid-template-columns: 36px 1fr; gap: 12px; width: 100%; padding: 16px 0; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); text-align: left; }
+    .myth:hover b, .myth[aria-pressed="true"] b { color: var(--moss); }
+    .myth-index { color: var(--clay); font: 400 20px var(--serif); }
+    .myth b { display: block; font-size: 13px; }
+    .myth span span { display: block; margin-top: 4px; color: var(--quiet); font-size: 11px; line-height: 1.4; }
+    .myth-answer { min-height: 70px; margin: 17px 0 0; color: var(--moss); font: 400 21px/1.35 var(--serif); letter-spacing: -.025em; }
+
+    .quiz { padding: 28px; border: 1px solid #eadabc; border-radius: 18px; background: var(--sun-pale); }
+    .quiz-top { display: flex; justify-content: space-between; gap: 15px; color: var(--clay); font-size: 11px; font-weight: 700; letter-spacing: .11em; }
+    .quiz-top span { color: var(--quiet); letter-spacing: .08em; }
+    .quiz-question { margin-top: 17px; font: 400 29px/1.08 var(--serif); letter-spacing: -.04em; }
+    .quiz-choices { display: grid; gap: 9px; margin-top: 22px; }
+    .quiz-choice { padding: 13px 14px; border: 1px solid #eadabc; border-radius: 10px; background: #fffefa; color: var(--ink); text-align: left; font-size: 13px; line-height: 1.4; }
+    .quiz-choice:hover:not(:disabled) { border-color: var(--moss); }
+    .quiz-choice:disabled { opacity: 1; }
+    .quiz-choice.is-correct { border-color: var(--moss); background: var(--moss-pale); }
+    .quiz-choice.is-wrong { border-color: var(--clay); background: var(--clay-pale); }
+    .quiz-feedback { min-height: 40px; margin: 16px 0 0; color: var(--quiet); font-size: 12px; line-height: 1.46; }
+    .quiz-next { border: 0; border-bottom: 1px solid var(--ink); background: transparent; padding: 0 0 3px; color: var(--ink); font-size: 12px; }
+    .quiz-next[hidden] { display: none; }
+
+    .healthy-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .85fr); gap: clamp(32px, 7vw, 90px); align-items: center; margin-top: 30px; }
+    .ideas { margin-top: 25px; }
+    .idea { display: grid; grid-template-columns: 32px 1fr; gap: 13px; padding: 13px 0; border-top: 1px solid var(--line); }
+    .idea:last-child { border-bottom: 1px solid var(--line); }
+    .idea-number { color: var(--clay); font: 400 19px var(--serif); }
+    .idea b { display: block; font-size: 13px; }
+    .idea span span { display: block; margin-top: 3px; color: var(--quiet); font-size: 12px; line-height: 1.43; }
+    .healthy-photo { min-height: 425px; border-radius: 50% 50% 20px 20px; }
+    .fact { display: inline-flex; flex-direction: column; gap: 3px; margin-top: 22px; padding: 13px 16px; background: var(--moss-pale); color: var(--moss); }
+    .fact b { font: 400 31px var(--serif); letter-spacing: -.05em; }
+    .fact span { font-size: 11px; }
+
+    .stories-sources { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 7vw, 90px); margin-top: 58px; padding-top: 32px; border-top: 1px solid var(--line); }
+    .story-kicker { margin: 0 0 10px; color: var(--moss); font-size: 11px; font-weight: 700; letter-spacing: .13em; }
+    .story-tabs { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+    .story-tab { border: 0; border-bottom: 1px solid var(--line); background: transparent; padding: 5px 0; color: var(--quiet); font-size: 12px; }
+    .story-tab[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); }
+    .story-text { min-height: 90px; margin: 18px 0 0; font: 400 22px/1.33 var(--serif); letter-spacing: -.025em; }
+    .sources { color: var(--quiet); font-size: 13px; line-height: 1.62; }
+    .sources a { color: var(--moss); }
+
+    .closing { margin-top: 22px; padding: 70px 36px; background: var(--moss-pale); text-align: center; }
+    .closing h2 { margin: 0 auto; }
+    .closing p { max-width: 620px; margin: 20px auto 0; color: var(--quiet); font-size: 14px; line-height: 1.6; }
+    .site-footer { display: flex; justify-content: space-between; gap: 20px; padding: 26px 0; color: var(--quiet); font-size: 11px; }
+
+    @media (max-width: 780px) {
+      .shell { width: min(100% - 32px, 1180px); }
+      .site-nav { display: none; }
+      .hero, .play-grid, .healthy-grid, .stories-sources { grid-template-columns: 1fr; }
+      .hero { padding: 50px 0 58px; }
+      .hero-photo { min-height: 355px; }
+      .chapter { padding: 55px 0; }
+      .chapter-grid { grid-template-columns: 1fr; gap: 20px; }
+      .lens-grid { grid-template-columns: 1fr; }
+      .lens { min-height: 130px; }
+      .photo-band { grid-template-columns: 1fr; }
+      .band-text { min-height: 170px; }
+      .healthy-photo { min-height: 360px; }
+      .site-footer { display: block; line-height: 1.8; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Second Sun home"><span class="brand-mark" aria-hidden="true"></span>Second Sun</a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#labels">01 · Age labels</a>
+        <a href="#play">02 · Myths &amp; quiz</a>
+        <a href="#healthy">03 · Healthy ageing</a>
+        <a href="#sources">Sources</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="eyebrow">A SLOWER GUIDE TO GETTING OLDER</p>
+          <h1 id="hero-title">Age is a number.<br>Growing older is a <em>story.</em></h1>
+          <p class="lead">Middle age. Older adulthood. Healthy ageing. The words can feel like fixed destinations, but they are only useful starting points for a life that keeps changing.</p>
+          <a class="jump" href="#labels">Scroll through the guide</a>
+        </div>
+        <figure class="photo hero-photo">
+          <img src="https://images.unsplash.com/photo-1773227059881-ef8ecf22aac8?auto=format&amp;fit=crop&amp;fm=jpg&amp;q=82&amp;w=1600" alt="Two older adults smiling and talking together indoors" fetchpriority="high">
+          <div class="photo-shade" aria-hidden="true"></div>
+          <figcaption class="photo-caption"><span>THE LONG VIEW</span><a href="https://unsplash.com/photos/two-smiling-seniors-talking-in-a-common-room-B_dZk2Ll-ls" target="_blank" rel="noopener noreferrer">Photo: Age Cymru / Unsplash</a></figcaption>
+          <span class="photo-fallback">The photo could not load. Please check your internet connection.</span>
+        </figure>
+      </section>
+
+      <section class="chapter" id="labels" aria-labelledby="labels-title">
+        <div class="chapter-grid">
+          <div class="chapter-label">PAGE 01</div>
+          <div>
+            <p class="eyebrow">THE LANGUAGE OF AGE</p>
+            <h2 id="labels-title">There is no birthday that makes someone “officially old.”</h2>
+            <p class="copy">In everyday language, <strong>middle age is often placed around 40–64</strong> and older adulthood around 65 and beyond. But those are social shortcuts, not medical verdicts. Different countries, services and communities draw their lines differently.</p>
+            <div class="lens-grid" role="group" aria-label="Different ways people use age labels">
+              <button class="lens" type="button" aria-pressed="true" data-title="Everyday language" data-copy="Middle age is often understood as roughly 40–64. “Older adult” often begins around 65—but people use the words differently."><span class="lens-value">around 65+</span><span class="lens-title">Everyday language</span><span class="lens-note">A familiar, simple starting point.</span></button>
+              <button class="lens" type="button" aria-pressed="false" data-title="Public systems" data-copy="Retirement systems and population statistics frequently use 65+ as a threshold because it is practical for comparison—not because everyone changes at that age."><span class="lens-value">often 65+</span><span class="lens-title">Public systems</span><span class="lens-note">Useful for benefits and population data.</span></button>
+              <button class="lens" type="button" aria-pressed="false" data-title="Global health" data-copy="Global health reporting often discusses populations aged 60 and over, reflecting changing needs across whole communities."><span class="lens-value">often 60+</span><span class="lens-title">Global health</span><span class="lens-note">Useful for planning for ageing populations.</span></button>
+            </div>
+            <p class="lens-answer" id="lens-answer" aria-live="polite"><strong>Everyday language:</strong> Middle age is often understood as roughly 40–64. “Older adult” often begins around 65—but people use the words differently.</p>
+            <div class="photo-band">
+              <figure class="photo band-photo">
+                <img src="https://images.unsplash.com/photo-1764173040180-0de9d351f9b3?auto=format&amp;fit=crop&amp;fm=jpg&amp;q=82&amp;w=1400" alt="Older adults talking together at a bus stop" loading="lazy">
+                <div class="photo-shade" aria-hidden="true"></div>
+                <figcaption class="photo-caption"><span>NO CLIFF EDGE</span><a href="https://unsplash.com/photos/elderly-people-talking-at-a-bus-stop-HFav_5shSlk" target="_blank" rel="noopener noreferrer">Photo: Centre for Ageing Better / Unsplash</a></figcaption>
+                <span class="photo-fallback">The photo could not load. Please check your internet connection.</span>
+              </figure>
+              <aside class="band-text"><b>THE USEFUL IDEA</b><p>Age can offer context, but it cannot tell us a whole person’s story.</p></aside>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter" id="play" aria-labelledby="play-title">
+        <div class="chapter-grid">
+          <div class="chapter-label">PAGE 02</div>
+          <div>
+            <p class="eyebrow">MYTHS &amp; QUIZ</p>
+            <h2 id="play-title">A few ideas are worth turning upside down.</h2>
+            <div class="play-grid">
+              <div>
+                <p class="copy">Tap a myth to uncover the more useful idea. Then try the short quiz—there is no personal score and no judgement.</p>
+                <div class="myths" role="group" aria-label="Ageing myths">
+                  <button class="myth" type="button" aria-pressed="true" data-answer="Age thresholds help organise public systems. They cannot predict a person’s health, energy, abilities or hopes."><span class="myth-index">01</span><span><b>“At 65, everyone becomes old.”</b><span>Tap for a clearer view</span></span></button>
+                  <button class="myth" type="button" aria-pressed="false" data-answer="People the same age can have very different strengths and needs. Age is context, not a complete portrait."><span class="myth-index">02</span><span><b>“Everyone ages in the same way.”</b><span>Tap for a clearer view</span></span></button>
+                  <button class="myth" type="button" aria-pressed="false" data-answer="Healthy ageing is not simply the absence of illness. It is also about being able to do what matters to you."><span class="myth-index">03</span><span><b>“Healthy ageing means never being ill.”</b><span>Tap for a clearer view</span></span></button>
+                </div>
+                <p class="myth-answer" id="myth-answer" aria-live="polite">Age thresholds help organise public systems. They cannot predict a person’s health, energy, abilities or hopes.</p>
+              </div>
+              <section class="quiz" aria-label="Three question ageing quiz">
+                <div class="quiz-top"><span>MINI QUIZ</span><span id="quiz-count">QUESTION 1 / 3</span></div>
+                <p class="quiz-question" id="quiz-question">Which is the fairest way to describe age labels?</p>
+                <div class="quiz-choices" id="quiz-choices"></div>
+                <p class="quiz-feedback" id="quiz-feedback" aria-live="polite">Choose the answer that feels most respectful and accurate.</p>
+                <button class="quiz-next" id="quiz-next" type="button" hidden>Next question</button>
+              </section>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter" id="healthy" aria-labelledby="healthy-title">
+        <div class="chapter-grid">
+          <div class="chapter-label">PAGE 03</div>
+          <div>
+            <p class="eyebrow">HEALTHY AGEING, YOUR WAY</p>
+            <h2 id="healthy-title">Health is more than a number on a calendar.</h2>
+            <div class="healthy-grid">
+              <div>
+                <p class="copy">The World Health Organization describes healthy ageing as maintaining the ability to do what matters. These ideas can look different for every person and every life.</p>
+                <div class="ideas" aria-label="Healthy ageing ideas">
+                  <div class="idea"><span class="idea-number">01</span><span><b>Move in ways that feel good</b><span>Walking, gardening, dancing or strength work: the useful activity is the one that fits your life.</span></span></div>
+                  <div class="idea"><span class="idea-number">02</span><span><b>Keep close to people</b><span>Relationships, community and shared interests can support wellbeing across the years.</span></span></div>
+                  <div class="idea"><span class="idea-number">03</span><span><b>Make space to keep learning</b><span>Curiosity, choice and contribution are all part of a meaningful life.</span></span></div>
+                </div>
+                <div class="fact"><b>2.1 billion</b><span>people worldwide may be aged 60+ by 2050 · WHO</span></div>
+              </div>
+              <figure class="photo healthy-photo">
+                <img src="https://images.unsplash.com/photo-1763631045896-04d2e60048ae?auto=format&amp;fit=crop&amp;fm=jpg&amp;q=82&amp;w=1400" alt="A multi-generational family walking outdoors in a park" loading="lazy">
+                <div class="photo-shade" aria-hidden="true"></div>
+                <figcaption class="photo-caption"><span>EVERYDAY CONNECTION</span><a href="https://unsplash.com/photos/a-multi-generational-family-walking-in-a-park-gezQ1Rz1iDw" target="_blank" rel="noopener noreferrer">Photo: Mobio Marketing / Unsplash</a></figcaption>
+                <span class="photo-fallback">The photo could not load. Please check your internet connection.</span>
+              </figure>
+            </div>
+
+            <div class="stories-sources">
+              <section aria-labelledby="stories-title">
+                <p class="story-kicker">ILLUSTRATIVE STORIES</p>
+                <h3 id="stories-title">Small moments, wide horizons.</h3>
+                <div class="story-tabs" role="group" aria-label="Choose an illustrative story">
+                  <button class="story-tab" type="button" aria-pressed="true" data-story="Maya, 67, joins a weekly walking group. The walk matters, but the conversation and laughter are what keep her coming back.">Maya</button>
+                  <button class="story-tab" type="button" aria-pressed="false" data-story="Daniel, 73, takes a pottery class. Learning something new gives his week a fresh rhythm and introduces him to new neighbours.">Daniel</button>
+                  <button class="story-tab" type="button" aria-pressed="false" data-story="Aram, 81, helps at his local library twice a month. He enjoys being useful, exchanging ideas and helping children choose books.">Aram</button>
+                </div>
+                <p class="story-text" id="story-text" aria-live="polite">Maya, 67, joins a weekly walking group. The walk matters, but the conversation and laughter are what keep her coming back.</p>
+              </section>
+              <section class="sources" id="sources" aria-labelledby="sources-title">
+                <p class="story-kicker">SOURCES</p>
+                <h3 id="sources-title">Learn more</h3>
+                <p>Read the <a href="https://www.who.int/news-room/fact-sheets/detail/ageing-and-health" target="_blank" rel="noopener noreferrer">WHO ageing and health fact sheet</a>, its guide to <a href="https://www.who.int/news-room/questions-and-answers/item/healthy-ageing-and-functional-ability" target="_blank" rel="noopener noreferrer">healthy ageing and functional ability</a>, and the National Institute on Aging’s <a href="https://www.nia.nih.gov/health/healthy-aging/what-do-we-know-about-healthy-aging" target="_blank" rel="noopener noreferrer">healthy ageing overview</a>.</p>
+              </section>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing" aria-labelledby="closing-title">
+        <p class="eyebrow">THE TAKEAWAY</p>
+        <h2 id="closing-title">A life stage can be named. A person cannot be reduced to one.</h2>
+        <p>This guide is for learning, not medical advice. The best questions about ageing begin with what a person values—and how their world can support it.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer"><span>Second Sun · a thoughtful guide to later life</span><span>Images: Unsplash · Facts: WHO &amp; NIA</span></footer>
+  </div>
+
+  <script>
+    (() => {
+      const root = document;
+      const lensButtons = [...root.querySelectorAll('.lens')];
+      const lensAnswer = root.querySelector('#lens-answer');
+      const mythButtons = [...root.querySelectorAll('.myth')];
+      const mythAnswer = root.querySelector('#myth-answer');
+      const quizCount = root.querySelector('#quiz-count');
+      const quizQuestion = root.querySelector('#quiz-question');
+      const quizChoices = root.querySelector('#quiz-choices');
+      const quizFeedback = root.querySelector('#quiz-feedback');
+      const quizNext = root.querySelector('#quiz-next');
+      const storyTabs = [...root.querySelectorAll('.story-tab')];
+      const storyText = root.querySelector('#story-text');
+      const quiz = [
+        { question: 'Which is the fairest way to describe age labels?', choices: ['They are medical verdicts.', 'They are useful reference points, not a full portrait.', 'They mean people have the same needs.'], answer: 1, note: 'Exactly. A number can be useful context, but it cannot describe a whole person.' },
+        { question: 'According to WHO, healthy ageing is most about…', choices: ['Never experiencing illness.', 'Keeping the ability to do what you value.', 'Reaching a particular birthday.'], answer: 1, note: 'Yes. WHO focuses on functional ability and wellbeing, not a perfect-health test.' },
+        { question: 'By 2050, about how many people may be aged 60+ worldwide?', choices: ['About 2.1 billion.', 'About 210 million.', 'About 12 million.'], answer: 0, note: 'Correct. WHO projects the global population aged 60+ will reach about 2.1 billion.' }
+      ];
+      let questionIndex = 0;
+      let answered = false;
+
+      function renderQuestion() {
+        const item = quiz[questionIndex];
+        answered = false;
+        quizCount.textContent = `QUESTION ${questionIndex + 1} / ${quiz.length}`;
+        quizQuestion.textContent = item.question;
+        quizChoices.replaceChildren(...item.choices.map((choice, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'quiz-choice';
+          button.dataset.choice = String(index);
+          button.textContent = choice;
+          return button;
+        }));
+        quizFeedback.textContent = 'Choose the answer that feels most respectful and accurate.';
+        quizNext.hidden = true;
+      }
+
+      lensButtons.forEach(button => button.addEventListener('click', () => {
+        lensButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        lensAnswer.innerHTML = `<strong>${button.dataset.title}:</strong> ${button.dataset.copy}`;
+      }));
+
+      mythButtons.forEach(button => button.addEventListener('click', () => {
+        mythButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        mythAnswer.textContent = button.dataset.answer;
+      }));
+
+      quizChoices.addEventListener('click', event => {
+        const selected = event.target.closest('.quiz-choice');
+        if (!selected || answered) return;
+        answered = true;
+        const item = quiz[questionIndex];
+        const isCorrect = Number(selected.dataset.choice) === item.answer;
+        [...quizChoices.children].forEach((button, index) => {
+          button.disabled = true;
+          button.classList.toggle('is-correct', index === item.answer);
+          button.classList.toggle('is-wrong', button === selected && !isCorrect);
+        });
+        quizFeedback.textContent = isCorrect ? item.note : `Not quite. ${item.note}`;
+        quizNext.textContent = questionIndex === quiz.length - 1 ? 'See the takeaway' : 'Next question';
+        quizNext.hidden = false;
+      });
+
+      quizNext.addEventListener('click', () => {
+        if (questionIndex === quiz.length - 1) {
+          quizCount.textContent = 'TAKEAWAY';
+          quizQuestion.textContent = 'Age gives context, not a conclusion.';
+          quizChoices.replaceChildren();
+          quizFeedback.textContent = 'Thanks for exploring. The point is not to get a score—it is to notice how much more there is to a person than a birthday.';
+          quizNext.hidden = true;
+          return;
+        }
+        questionIndex += 1;
+        renderQuestion();
+      });
+
+      storyTabs.forEach(button => button.addEventListener('click', () => {
+        storyTabs.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        storyText.textContent = button.dataset.story;
+      }));
+
+      root.querySelectorAll('.photo img').forEach(image => image.addEventListener('error', () => image.closest('.photo').classList.add('is-missing')));
+      renderQuestion();
+    })();
+  </script>
+</body>
+</html>
